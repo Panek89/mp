@@ -1,12 +1,16 @@
+using MachinesWorker.Context;
+
 namespace MachinesWorker;
 
 public class Worker : BackgroundService
 {
     private readonly ILogger<Worker> _logger;
+    private readonly AppDbContext _context;
 
-    public Worker(ILogger<Worker> logger)
+    public Worker(ILogger<Worker> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
+        _context = serviceProvider.CreateScope().ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

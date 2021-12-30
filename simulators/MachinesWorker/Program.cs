@@ -1,8 +1,12 @@
 using MachinesWorker;
+using MachinesWorker.Context;
+using Microsoft.EntityFrameworkCore;
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
+    .ConfigureServices((hostContext, services) =>
     {
+        services.AddDbContext<AppDbContext>(options => 
+            options.UseSqlServer(hostContext.Configuration.GetConnectionString("")));
         services.AddHostedService<Worker>();
     })
     .Build();
