@@ -1,4 +1,4 @@
-namespace MachinesWorker.Models
+namespace MP.MachinesApi.Models
 {
     public class Machine
     {
@@ -6,6 +6,6 @@ namespace MachinesWorker.Models
         public string Manufacturer { get; set; }
         public string Model { get; set; }
 
-        public ICollection<Parameter> Parameters { get; set; }
+        ICollection<Parameter> Parameters { get; set; }
     }
 }
