@@ -24,7 +24,7 @@ namespace MP.MachinesApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult PostParameter(Parameter parameter)
+        public IActionResult PostParameter([FromBody]Parameter parameter)
         {
             _unitOfWork.Parameters.Add(parameter);
             _unitOfWork.Complete();
