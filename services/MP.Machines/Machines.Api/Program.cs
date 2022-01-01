@@ -1,4 +1,7 @@
 using Machines.DataAccess.EfCore;
+using Machines.DataAccess.EfCore.Repositories;
+using Machines.DataAccess.EfCore.UnitOfWork;
+using Machines.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +17,14 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
+
+# region Repositories
+builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddTransient<IParameterRepository, ParameterRepository>();
+builder.Services.AddTransient<IMachineRepository, MachineRepository>();
+# endregion
+
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
