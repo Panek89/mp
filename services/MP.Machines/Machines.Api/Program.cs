@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
+        builder.Configuration.GetConnectionString("SQL2019DEV"),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
 # region Repositories

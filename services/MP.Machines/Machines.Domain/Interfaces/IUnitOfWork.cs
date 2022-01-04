@@ -4,6 +4,6 @@ namespace Machines.Domain.Interfaces
     {
         IParameterRepository Parameters { get; }
         IMachineRepository Machines { get; }
-        int Complete();
+        Task<int> CompleteAsync();
     }
 }

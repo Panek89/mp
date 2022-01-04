@@ -16,20 +16,63 @@ namespace MP.MachinesApi.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        [HttpGet]
-        public IActionResult GetParameters()
+        [HttpGet("GetAllParameters")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetParameters()
         {
-            var parameters = _unitOfWork.Parameters.GetAll();
+            var parameters = await _unitOfWork.Parameters.GetAllAsync();
             return Ok(parameters);
         }
 
-        [HttpPost]
-        public IActionResult PostParameter([FromBody]Parameter parameter)
+        [HttpGet("{id}")]
+        [Produces("application/json")]
+        public async Task<IActionResult> GetParameterById(string id)
         {
-            _unitOfWork.Parameters.Add(parameter);
-            _unitOfWork.Complete();
+            var parameter = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(id));
+            if (parameter == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                return Ok(parameter);
+            }
+        }
+
+        [HttpPost]
+        [Produces("application/json")]
+        public async Task<IActionResult> PostParameter([FromBody]Parameter parameter)
+        {
+            await _unitOfWork.Parameters.AddAsync(parameter);
+            await _unitOfWork.CompleteAsync();
             
             return Ok(parameter);
+        }
+
+        [HttpDelete("{id}")]
+        [Produces("application/json")]
+        public async Task<IActionResult> RemoveParameter(string id)
+        {
+            var parameterToRemove = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(id));
+            if (parameterToRemove == null)
+            {
+                return NotFound();
+            }
+            else 
+            {
+                _unitOfWork.Parameters.Remove(parameterToRemove);
+                await _unitOfWork.CompleteAsync();
+
+                return NoContent();
+            }
+        }
+
+        [HttpDelete]
+        [Produces("application/json")]
+        public IActionResult RemoveParameters()
+        {
+            // TO IMPLEMENT
+            return Ok();
         }
     }
 }

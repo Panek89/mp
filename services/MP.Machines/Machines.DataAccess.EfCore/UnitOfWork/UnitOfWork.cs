@@ -17,9 +17,9 @@ namespace Machines.DataAccess.EfCore.UnitOfWork
         public IParameterRepository Parameters { get; private set; }
         public IMachineRepository Machines { get; private set; }
 
-        public int Complete()
+        public async Task<int> CompleteAsync()
         {
-            return _context.SaveChanges();
+            return await _context.SaveChangesAsync();
         }
 
         public void Dispose()

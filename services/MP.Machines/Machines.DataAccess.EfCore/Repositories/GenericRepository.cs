@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using Machines.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Machines.DataAccess.EfCore.Repositories
 {
@@ -10,25 +11,25 @@ namespace Machines.DataAccess.EfCore.Repositories
     {
         _context = context;
     }
-    public void Add(T entity)
+    public async Task AddAsync(T entity)
     {
-        _context.Set<T>().Add(entity);
+        await _context.Set<T>().AddAsync(entity);
     }
-    public void AddRange(IEnumerable<T> entities)
+    public async Task AddRangeAsync(IEnumerable<T> entities)
     {
-        _context.Set<T>().AddRange(entities);
+        await _context.Set<T>().AddRangeAsync(entities);
     }
     public IEnumerable<T> Find(Expression<Func<T, bool>> expression)
     {
         return _context.Set<T>().Where(expression);
     }
-    public IEnumerable<T> GetAll()
+    public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return _context.Set<T>().ToList();
+        return await _context.Set<T>().ToListAsync();
     }
-    public T GetById(int id)
+    public async Task<T> GetByIdAsync(Guid id)
     {
-        return _context.Set<T>().Find(id);
+        return await _context.Set<T>().FindAsync(id);
     }
     public void Remove(T entity)
     {
