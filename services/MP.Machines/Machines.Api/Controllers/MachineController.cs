@@ -86,5 +86,24 @@ namespace MP.MachinesApi.Controllers
             }
         }
 
+        [HttpDelete("RemoveMachineByManufacturer")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveMachineByManufacturer([FromQuery(Name = "manufacturer")] string manufacturer)
+        {
+            var machinesToRemove = _unitOfWork.Machines.Find(x => x.Manufacturer == manufacturer);
+            if (machinesToRemove == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _unitOfWork.Machines.RemoveRange(machinesToRemove);
+                await _unitOfWork.CompleteAsync();
+
+                return NoContent();
+            }
+        }
     }
 }
