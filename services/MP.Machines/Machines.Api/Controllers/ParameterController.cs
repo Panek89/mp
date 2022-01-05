@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Machines.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MP.MachinesApi.Models;
@@ -18,6 +19,7 @@ namespace MP.MachinesApi.Controllers
 
         [HttpGet("GetAllParameters")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Parameter))]
         public async Task<IActionResult> GetParameters()
         {
             var parameters = await _unitOfWork.Parameters.GetAllAsync();
@@ -26,6 +28,8 @@ namespace MP.MachinesApi.Controllers
 
         [HttpGet("{id}")]
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Parameter))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetParameterById(string id)
         {
             var parameter = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(id));
@@ -40,18 +44,34 @@ namespace MP.MachinesApi.Controllers
         }
 
         [HttpPost]
+        [Consumes(MediaTypeNames.Application.Json)]
         [Produces("application/json")]
-        public async Task<IActionResult> PostParameter([FromBody]Parameter parameter)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Parameter))]
+        public async Task<IActionResult> PostParameter([FromBody] Parameter parameter)
         {
             await _unitOfWork.Parameters.AddAsync(parameter);
             await _unitOfWork.CompleteAsync();
             
-            return Ok(parameter);
+            return CreatedAtAction(nameof(GetParameterById), new { id = parameter.Id }, parameter);
         }
 
-        [HttpDelete("{id}")]
+        [HttpPost("CreateParameters")]
+        [Consumes(MediaTypeNames.Application.Json)]
         [Produces("application/json")]
-        public async Task<IActionResult> RemoveParameter(string id)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Parameter>))]
+        public async Task<IActionResult> PostParameters([FromBody] IEnumerable<Parameter> parameters)
+        {
+            await _unitOfWork.Parameters.AddRangeAsync(parameters);
+            await _unitOfWork.CompleteAsync();
+
+            return CreatedAtAction(nameof(GetParameters), parameters);
+        }
+
+        [HttpDelete("RemoveParameterById")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveParameterById([FromQuery(Name = "id")] string id)
         {
             var parameterToRemove = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(id));
             if (parameterToRemove == null)
@@ -67,12 +87,24 @@ namespace MP.MachinesApi.Controllers
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("RemoveParametersByKey")]
         [Produces("application/json")]
-        public IActionResult RemoveParameters()
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> RemoveParametersByKey([FromQuery(Name = "key")] string key)
         {
-            // TO IMPLEMENT
-            return Ok();
+            var parametersToRemove = _unitOfWork.Parameters.Find(x => x.Key == key);
+            if (parametersToRemove.Count() > 0)
+            {
+                _unitOfWork.Parameters.RemoveRange(parametersToRemove);
+                await _unitOfWork.CompleteAsync();
+                
+                return NoContent();
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }
