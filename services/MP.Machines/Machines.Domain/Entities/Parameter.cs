@@ -7,6 +7,6 @@ namespace MP.MachinesApi.Models
         public double MinValue { get; set; }
         public double MaxValue { get; set; }
 
-        ICollection<Machine> Machines { get; set; }
+        public ICollection<Machine> Machines { get; set; }
     }
 }

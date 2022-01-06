@@ -6,6 +6,6 @@ namespace MP.MachinesApi.Models
         public string Manufacturer { get; set; }
         public string Model { get; set; }
 
-        ICollection<Parameter> Parameters { get; set; }
+        public ICollection<Parameter> Parameters { get; set; }
     }
 }
