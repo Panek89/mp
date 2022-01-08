@@ -23,9 +23,18 @@ namespace Machines.DataAccess.EfCore.Repositories
     {
         return _context.Set<T>().Where(expression);
     }
+
+    public T FindWithRelationship(Expression<Func<T, bool>> expression, Expression<Func<T, object>> criteria)
+    {
+        return _context.Set<T>().Where(expression).Include(criteria).FirstOrDefault();
+    }
     public async Task<IEnumerable<T>> GetAllAsync()
     {
         return await _context.Set<T>().ToListAsync();
+    }
+    public async Task<IEnumerable<T>> GetAllWithRelationshipAsync(Expression<Func<T, object>> criteria)
+    {
+        return await _context.Set<T>().Include(criteria).ToListAsync();
     }
     public async Task<T> GetByIdAsync(Guid id)
     {

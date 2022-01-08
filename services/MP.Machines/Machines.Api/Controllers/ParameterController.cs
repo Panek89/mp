@@ -1,4 +1,6 @@
 using System.Net.Mime;
+using AutoMapper;
+using Machines.Api.Models.DTO;
 using Machines.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MP.MachinesApi.Models;
@@ -11,10 +13,12 @@ namespace MP.MachinesApi.Controllers
     public class ParameterController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         
-        public ParameterController(IUnitOfWork unitOfWork)
+        public ParameterController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllParameters")]
@@ -22,24 +26,27 @@ namespace MP.MachinesApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Parameter))]
         public async Task<IActionResult> GetParameters()
         {
-            var parameters = await _unitOfWork.Parameters.GetAllAsync();
-            return Ok(parameters);
+            var parameters = await _unitOfWork.Parameters.GetAllWithRelationshipAsync(r => r.Machines);
+            var parameterDTOs = _mapper.Map<IEnumerable<ParameterDTO>>(parameters);
+
+            return Ok(parameterDTOs);
         }
 
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Parameter))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetParameterById(string id)
+        public IActionResult GetParameterById(string id)
         {
-            var parameter = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(id));
+            var parameter = _unitOfWork.Parameters.FindWithRelationship(p => p.Id == Guid.Parse(id), r => r.Machines);
             if (parameter == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(parameter);
+                var parameterDto = _mapper.Map<ParameterDTO>(parameter);
+                return Ok(parameterDto);
             }
         }
 

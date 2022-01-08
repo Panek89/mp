@@ -1,4 +1,6 @@
 using System.Net.Mime;
+using AutoMapper;
+using Machines.Api.Models.DTO;
 using Machines.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using MP.MachinesApi.Models;
@@ -10,10 +12,12 @@ namespace MP.MachinesApi.Controllers
     public class MachineController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public MachineController(IUnitOfWork unitOfWork)
+        public MachineController(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("GetAllMachines")]
@@ -21,24 +25,26 @@ namespace MP.MachinesApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Machine))]
         public async Task<IActionResult> GetMachines()
         {
-            var machines = await _unitOfWork.Machines.GetAllAsync();
-            return Ok(machines);
+            var machines = await _unitOfWork.Machines.GetAllWithRelationshipAsync(r => r.Parameters);
+            var machineDTOs = _mapper.Map<IEnumerable<MachineDTO>>(machines);
+            return Ok(machineDTOs);
         }
 
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Machine))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetMachineById(string id)
+        public IActionResult GetMachineById(string id)
         {
-            var machine = await _unitOfWork.Machines.GetByIdAsync(Guid.Parse(id));
+            var machine = _unitOfWork.Machines.FindWithRelationship(m => m.Id == Guid.Parse(id), r => r.Parameters);
             if (machine == null)
             {
                 return NotFound();
             }
             else
             {
-                return Ok(machine);
+                var machineDto = _mapper.Map<MachineDTO>(machine);
+                return Ok(machineDto);
             }
         }
 
@@ -103,6 +109,28 @@ namespace MP.MachinesApi.Controllers
                 await _unitOfWork.CompleteAsync();
 
                 return NoContent();
+            }
+        }
+
+        [HttpPost("AssignParameterToMachine/{machineId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Machine>))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> AssignParameterToMachine(string machineId, [FromBody] string parameterId)
+        {
+            var machine = await _unitOfWork.Machines.GetByIdAsync(Guid.Parse(machineId));
+            var parameterToAssign = await _unitOfWork.Parameters.GetByIdAsync(Guid.Parse(parameterId));
+
+            if (machine != null && parameterToAssign != null)
+            {
+                _unitOfWork.Machines.AssignParameterToMachine(machine, parameterToAssign);
+                await _unitOfWork.CompleteAsync();
+
+                return Ok();
+            }
+            else 
+            {
+                return NotFound();
             }
         }
     }

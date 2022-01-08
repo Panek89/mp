@@ -9,6 +9,11 @@ public class ApplicationContext : DbContext
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+    }
+
     public DbSet<Machine> Machines { get; set; }
     public DbSet<Parameter> Parameters { get; set; }
 }
