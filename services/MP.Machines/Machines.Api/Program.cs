@@ -1,6 +1,7 @@
-using System.Text.Json.Serialization;
+// using System.Text.Json.Serialization;
 using Machines.DataAccess.EfCore;
 using Machines.DataAccess.EfCore.Repositories;
+using Machines.DataAccess.EfCore.Services.DB;
 using Machines.DataAccess.EfCore.UnitOfWork;
 using Machines.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,6 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
@@ -30,8 +30,16 @@ builder.Services.AddTransient<IMachineRepository, MachineRepository>();
 # endregion
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDbInitialize, DbInitialize>();
 
 var app = builder.Build();
+
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
+    var appContext = services.GetRequiredService<IDbInitialize>();
+    appContext.Initialize();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
