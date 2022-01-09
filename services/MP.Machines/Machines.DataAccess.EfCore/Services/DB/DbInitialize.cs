@@ -24,14 +24,21 @@ namespace Machines.DataAccess.EfCore.Services.DB
             }
             else 
             {
-                _logger.LogInformation("Try to create DB");
-                var dbCreated = _applicationContext.Database.EnsureCreated();
-                if(dbCreated) 
+                _logger.LogInformation("DB Not Exists, try to create DB");
+                try
                 {
-                    _logger.LogInformation("DB Created");
+                    var dbCreated = _applicationContext.Database.EnsureCreated();
+                    if(dbCreated) 
+                    {
+                        _logger.LogInformation("DB Created");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Error occurs when trying to create a database, {ex}");
                 }
             }
-
+            
             return dbExists;
         }
     }
