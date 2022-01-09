@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -26,17 +27,15 @@ namespace Machines.DataAccess.EfCore.Services.DB
             if (dbExists)
             {
                 _logger.LogInformation("DB Already exists");
+                checkPendingAndApplyMigrations();
             }
             else 
             {
                 _logger.LogInformation("DB Not Exists, try to create DB");
                 try
                 {
-                    var dbCreated = _applicationContext.Database.EnsureCreated();
-                    if(dbCreated) 
-                    {
-                        _logger.LogInformation("DB Created");
-                    }
+                    _applicationContext.Database.Migrate();
+                    _logger.LogInformation("DB Created");
                 }
                 catch (Exception ex)
                 {
@@ -45,6 +44,21 @@ namespace Machines.DataAccess.EfCore.Services.DB
             }
             
             return dbExists;
+        }
+
+        private void checkPendingAndApplyMigrations()
+        {
+            _logger.LogInformation("Check if there is another migrations to applied");
+            var isMigrationNeeded = _applicationContext.Database.GetPendingMigrations().Any();
+            if (isMigrationNeeded)
+            {
+                _applicationContext.Database.Migrate();
+                _logger.LogInformation("Pending migration applied");
+            }
+            else
+            {
+                _logger.LogInformation("No migration needed");
+            }
         }
     }
 }
