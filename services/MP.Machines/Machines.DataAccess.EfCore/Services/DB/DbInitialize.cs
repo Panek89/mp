@@ -15,6 +15,11 @@ namespace Machines.DataAccess.EfCore.Services.DB
             _applicationContext = applicationContext;
         }
 
+        public bool CheckIfExists()
+        {
+            return _applicationContext.Database.GetService<IRelationalDatabaseCreator>().Exists();
+        }
+
         public bool Initialize()
         {
             var dbExists = _applicationContext.Database.GetService<IRelationalDatabaseCreator>().Exists(); 
