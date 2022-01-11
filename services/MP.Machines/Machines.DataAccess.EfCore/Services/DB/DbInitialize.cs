@@ -35,6 +35,7 @@ namespace Machines.DataAccess.EfCore.Services.DB
                 try
                 {
                     _applicationContext.Database.Migrate();
+                    dbExists = true;
                     _logger.LogInformation("DB Created");
                 }
                 catch (Exception ex)

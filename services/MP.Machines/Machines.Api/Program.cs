@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
+        builder.Configuration.GetConnectionString(""),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
 # region Repositories
@@ -31,6 +31,7 @@ builder.Services.AddTransient<IMachineRepository, MachineRepository>();
 
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitialize, DbInitialize>();
+builder.Services.AddScoped<IDbSeed, DbSeed>();
 
 var app = builder.Build();
 
@@ -38,7 +39,13 @@ using (var serviceScope = app.Services.CreateScope())
 {
     var services = serviceScope.ServiceProvider;
     var appContext = services.GetRequiredService<IDbInitialize>();
-    appContext.Initialize();
+    var dbExists = appContext.Initialize();
+
+    if (dbExists)
+    {
+        var dbSeed = services.GetRequiredService<IDbSeed>();
+        await dbSeed.Seed();
+    }
 }
 
 // Configure the HTTP request pipeline.
