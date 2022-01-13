@@ -3,8 +3,10 @@ using Machines.DataAccess.EfCore;
 using Machines.DataAccess.EfCore.Repositories;
 using Machines.DataAccess.EfCore.Services.DB;
 using Machines.DataAccess.EfCore.UnitOfWork;
+using Machines.Domain.Configuration.Options;
 using Machines.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,9 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString(""),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
+
+builder.Services.Configure<SeedOptions>
+    (builder.Configuration.GetSection(SeedOptions.Seed));
 
 # region Repositories
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -44,7 +49,11 @@ using (var serviceScope = app.Services.CreateScope())
     if (dbExists)
     {
         var dbSeed = services.GetRequiredService<IDbSeed>();
-        await dbSeed.Seed();
+        var seedOptions = services.GetRequiredService<IOptions<SeedOptions>>();
+        if (seedOptions.Value.DoSeed)
+        {
+            await dbSeed.Seed();
+        }
     }
 }
 
