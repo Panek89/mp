@@ -1,4 +1,7 @@
 // using System.Text.Json.Serialization;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Machines.Api.Validators;
 using Machines.DataAccess.EfCore;
 using Machines.DataAccess.EfCore.Repositories;
 using Machines.DataAccess.EfCore.Services.DB;
@@ -7,6 +10,7 @@ using Machines.Domain.Configuration.Options;
 using Machines.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using MP.MachinesApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +26,15 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString(""),
+        builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
+# region Options
 builder.Services.Configure<SeedOptions>
     (builder.Configuration.GetSection(SeedOptions.Seed));
+# endregion
+
+builder.Services.AddMvc().AddFluentValidation();
 
 # region Repositories
 builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -37,6 +45,8 @@ builder.Services.AddTransient<IMachineRepository, MachineRepository>();
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDbInitialize, DbInitialize>();
 builder.Services.AddScoped<IDbSeed, DbSeed>();
+builder.Services.AddTransient<IValidator<Parameter>, ParameterValidator>();
+builder.Services.AddTransient<IValidator<Machine>, MachineValidator>();
 
 var app = builder.Build();
 
