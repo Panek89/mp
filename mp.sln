@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simulators", "simulators", "{31FB123D-CB5F-4B57-88CA-F53C8F01FF34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachinesWorker", "simulators\MachinesWorker\MachinesWorker.csproj", "{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{085A35CC-E2BB-49F9-8A64-6F22092354FD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MP.Machines", "MP.Machines", "{BB704AEB-1587-44D3-9F2C-16038DEA0019}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MP.MachinesApi", "services\MP.Machines\Machines.Api\MP.MachinesApi.csproj", "{0440B947-9E73-42FB-B0D0-C67438BB8AC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machines.DataAccess.EfCore", "services\MP.Machines\Machines.DataAccess.EfCore\Machines.DataAccess.EfCore.csproj", "{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machines.Domain", "services\MP.Machines\Machines.Domain\Machines.Domain.csproj", "{C1A2F02D-5567-41C4-99CD-CDD5F2778B64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0440B947-9E73-42FB-B0D0-C67438BB8AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0440B947-9E73-42FB-B0D0-C67438BB8AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0440B947-9E73-42FB-B0D0-C67438BB8AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0440B947-9E73-42FB-B0D0-C67438BB8AC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EF4CEF76-274B-43CF-A5B5-8F69BC1DA39E} = {31FB123D-CB5F-4B57-88CA-F53C8F01FF34}
+		{BB704AEB-1587-44D3-9F2C-16038DEA0019} = {085A35CC-E2BB-49F9-8A64-6F22092354FD}
+		{0440B947-9E73-42FB-B0D0-C67438BB8AC7} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
+		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
+		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
+	EndGlobalSection
+EndGlobal

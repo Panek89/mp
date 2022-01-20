@@ -1,4 +1,4 @@
-namespace MachinesWorker.Models
+namespace MP.MachinesApi.Models
 {
     public class Machine
     {

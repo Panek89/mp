@@ -1,11 +1,9 @@
-namespace MachinesWorker.Models
+namespace Machines.Api.Models.DTO
 {
-    public class Machine
+    public class MachineBaseDTO
     {
         public Guid Id { get; set; }
         public string Manufacturer { get; set; }
         public string Model { get; set; }
-
-        public ICollection<Parameter> Parameters { get; set; }
     }
 }
