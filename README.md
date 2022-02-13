@@ -44,7 +44,7 @@ Update database (run command in root of project)
 dotnet ef --startup-project .\services\MP.Machines\Machines.Api\ database update --project .\services\MP.Machines\Machines.DataAccess.EfCore\
 ```
 
-#### Configuration
+#### MP.Machines - Configuration
 
 The configuration file is at the path services\MP.Machines\Machines.Api\appsettings.json
 
@@ -74,12 +74,43 @@ What can be configured?
 - Connection String for connection to DB
 - Seed section, where can the database be seed preconfigured, whether it should take place and, if so, in what quantities it should be seed
 
-By default it was filled and it works with that configuration
+By default it was filled and it works with that configuration (via Docker)
 
-#### Docker
+### MachineParameters
+
+Microservice responsible for sending machine parameters data. Everything is placed at the moment in one ASP.NET Core Web Api project.
+
+Access to data is provided by Entity Framework Core.
+
+#### MachineParameters - Configuration
+
+The configuration file is at the path simulators\MachineParameters\appsettings.json
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "SQL2019DEV": "Server=mssqldb;Database=MP.Sim.MachParams;User Id=sa;Password=MightyPassword2022!;"
+  },
+  "AllowedHosts": "*"
+}
+```
+
+What can be configured?
+
+- Connection String for connection to DB
+
+By default it was filled and it works with that configuration (via Docker)
+
+## Docker
 
 There is also possible for run microservice via compose file,
-it was automatically create MSSQL DB and run microservice.
+it was automatically create MSSQL DB and run microservice's.
 docker-compose.yml file was placed in root.
 
 Command for create and run Docker containers:
