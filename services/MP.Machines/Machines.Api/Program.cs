@@ -18,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("SQLDEVELOPER2016"),
+        builder.Configuration.GetConnectionString(""),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
 # region Options
