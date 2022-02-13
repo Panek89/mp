@@ -29,7 +29,7 @@ It's contains three projects:
 - Data Access (configured with EF Core 6)
 - Domain
 
-#### Create and run migration
+#### MP.Machines - Create and run migration
 
 Run this command if there is no migrations in the project, or you want to refresh all migrations.
 Create Initial migrations (run command in root of project)
