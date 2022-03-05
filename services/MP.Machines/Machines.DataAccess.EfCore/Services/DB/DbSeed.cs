@@ -20,6 +20,12 @@ namespace Machines.DataAccess.EfCore.Services.DB
 
         public async Task<int> Seed()
         {
+            var machines = await _unitOfWork.Machines.GetAllAsync();
+            if (machines.Count() > 0 && !_seedOptions.DoSeedWhenDataExists) 
+            {
+                return 0;
+            }
+
             var generatedParameters = GenerateParameters(_seedOptions.ParametersCount);
             var generatedMachines = GenerateMachines(_seedOptions.MachinesCount, generatedParameters);
 
