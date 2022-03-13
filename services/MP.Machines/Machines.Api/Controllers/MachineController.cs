@@ -1,7 +1,10 @@
 using System.Net.Mime;
 using AutoMapper;
 using Machines.Api.Models.DTO;
+using Machines.Domain.Enums;
+using Machines.Domain.Helpers;
 using Machines.Domain.Interfaces;
+using Machines.EventServiceBus.Services.Machines;
 using Microsoft.AspNetCore.Mvc;
 using MP.MachinesApi.Models;
 
@@ -13,11 +16,13 @@ namespace MP.MachinesApi.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IMachineSender _machineSender;
 
-        public MachineController(IUnitOfWork unitOfWork, IMapper mapper)
+        public MachineController(IUnitOfWork unitOfWork, IMapper mapper, IMachineSender machineSender)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _machineSender = machineSender;
         }
 
         [HttpGet("GetAllMachines")]
@@ -52,8 +57,9 @@ namespace MP.MachinesApi.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Machine))]
-        public async Task<IActionResult> PostParameter([FromBody] Machine machine)
+        public async Task<IActionResult> PostMachine([FromBody] Machine machine)
         {
+            _machineSender.SendMachine(ServiceBusMachineHelper.MapSingleServiceBusMachineDTO(machine, ServiceBusEnumStatus.Create));
             await _unitOfWork.Machines.AddAsync(machine);
             await _unitOfWork.CompleteAsync();
             
@@ -64,8 +70,9 @@ namespace MP.MachinesApi.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<Machine>))]
-        public async Task<IActionResult> PostParameters([FromBody] IEnumerable<Machine> machines)
+        public async Task<IActionResult> PostMachines([FromBody] IEnumerable<Machine> machines)
         {
+            _machineSender.SendMachines(ServiceBusMachineHelper.MapMultipleServiceBusMachineDTOs(machines.ToList(), ServiceBusEnumStatus.Create));
             await _unitOfWork.Machines.AddRangeAsync(machines);
             await _unitOfWork.CompleteAsync();
 
@@ -85,6 +92,7 @@ namespace MP.MachinesApi.Controllers
             }
             else 
             {
+                _machineSender.SendMachine(ServiceBusMachineHelper.MapSingleServiceBusMachineDTO(machineToRemove, ServiceBusEnumStatus.Delete));
                 _unitOfWork.Machines.Remove(machineToRemove);
                 await _unitOfWork.CompleteAsync();
 
@@ -105,6 +113,7 @@ namespace MP.MachinesApi.Controllers
             }
             else
             {
+                _machineSender.SendMachines(ServiceBusMachineHelper.MapMultipleServiceBusMachineDTOs(machinesToRemove.ToList(), ServiceBusEnumStatus.Delete));
                 _unitOfWork.Machines.RemoveRange(machinesToRemove);
                 await _unitOfWork.CompleteAsync();
 

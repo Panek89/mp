@@ -13,7 +13,6 @@ namespace MachineParameters.Services
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                _logger.LogInformation("Hosted service executing - {0}", DateTime.Now);
                 try
                 {
                     // wait for 5 seconds

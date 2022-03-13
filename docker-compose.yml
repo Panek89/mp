@@ -1,5 +1,13 @@
 version: "3.9"
 services:
+    rabbitmq:
+        image: "rabbitmq:3-management"
+        deploy:
+            replicas: 1
+        ports:
+            - "15672:15672"
+            - "5672:5672"
+        hostname: "rabbitmqhn"
     mssqldb:
         image: "mcr.microsoft.com/mssql/server:2019-latest"
         environment:
@@ -13,6 +21,7 @@ services:
             - "8000:80"
         depends_on:
             - mssqldb
+            - rabbitmq
     mach-par-sim:
         build: ./simulators/MachineParameters
         ports:
@@ -20,3 +29,4 @@ services:
         depends_on:
             - mssqldb
             - mp-machines
+            - rabbitmq

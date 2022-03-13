@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "simulators", "simulators", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MachineParameters", "simulators\MachineParameters\MachineParameters.csproj", "{8F356CFD-21A4-4B88-A910-BD0CB8A066E5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Machines.EventServiceBus", "services\MP.Machines\Machines.EventServiceBus\Machines.EventServiceBus.csproj", "{987CDE1C-190C-4719-89CA-BF9B6B786284}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,6 +44,10 @@ Global
 		{8F356CFD-21A4-4B88-A910-BD0CB8A066E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F356CFD-21A4-4B88-A910-BD0CB8A066E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F356CFD-21A4-4B88-A910-BD0CB8A066E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{987CDE1C-190C-4719-89CA-BF9B6B786284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{987CDE1C-190C-4719-89CA-BF9B6B786284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{987CDE1C-190C-4719-89CA-BF9B6B786284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{987CDE1C-190C-4719-89CA-BF9B6B786284}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BB704AEB-1587-44D3-9F2C-16038DEA0019} = {085A35CC-E2BB-49F9-8A64-6F22092354FD}
@@ -49,5 +55,6 @@ Global
 		{34B1DF70-DD51-4616-8FA9-B2C3D5966CEF} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
 		{C1A2F02D-5567-41C4-99CD-CDD5F2778B64} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
 		{8F356CFD-21A4-4B88-A910-BD0CB8A066E5} = {7A8DCE2B-F560-419B-A5B9-94CFC901925E}
+		{987CDE1C-190C-4719-89CA-BF9B6B786284} = {BB704AEB-1587-44D3-9F2C-16038DEA0019}
 	EndGlobalSection
 EndGlobal
