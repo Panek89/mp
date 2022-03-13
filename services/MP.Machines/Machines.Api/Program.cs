@@ -1,14 +1,12 @@
 using Machines.Api.Extensions;
+using Machines.Api.Startup;
 using Machines.DataAccess.EfCore;
-using Machines.DataAccess.EfCore.Services.DB;
 using Machines.Domain.Configuration.Options;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -18,42 +16,34 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString(""),
+        builder.Configuration.GetConnectionString("MSSQL"),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
 # region Options
 builder.Services.Configure<SeedOptions>
     (builder.Configuration.GetSection(SeedOptions.Seed));
+builder.Services.Configure<RabbitMqOptions>
+    (builder.Configuration.GetSection(RabbitMqOptions.RabbitMQ));
 # endregion
 
 # region Extensions
 builder.Services.RepoServiceExtensions();
 builder.Services.DbServiceExtensions();
 builder.Services.ValidatorsServiceExtensions();
+builder.Services.EventServiceBusExtensions();
 # endregion
 
 var app = builder.Build();
 
 using (var serviceScope = app.Services.CreateScope())
 {
-    var services = serviceScope.ServiceProvider;
-    var appContext = services.GetRequiredService<IDbInitialize>();
-    var dbExists = appContext.Initialize();
-
-    if (dbExists)
-    {
-        var dbSeed = services.GetRequiredService<IDbSeed>();
-        var seedOptions = services.GetRequiredService<IOptions<SeedOptions>>();
-        if (seedOptions.Value.DoSeed)
-        {
-            await dbSeed.Seed();
-        }
-    }
+    await AppStartup.ApplicationStartup(serviceScope);
 }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Move this section out, if want have Swagger also in Docker ENV
     app.UseSwagger();
     app.UseSwaggerUI();
 }

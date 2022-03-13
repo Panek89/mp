@@ -1,7 +1,9 @@
 using Bogus;
 using Machines.Domain.Configuration.Options;
 using Machines.Domain.Constant;
+using Machines.Domain.Helpers;
 using Machines.Domain.Interfaces;
+using Machines.EventServiceBus.Services.Machines;
 using Microsoft.Extensions.Options;
 using MP.MachinesApi.Models;
 
@@ -11,11 +13,13 @@ namespace Machines.DataAccess.EfCore.Services.DB
     {   
         private readonly IUnitOfWork _unitOfWork;
         private readonly SeedOptions _seedOptions;
+        private readonly IMachineSender _machineSender;
 
-        public DbSeed(IUnitOfWork unitOfWork, IOptions<SeedOptions> seedOptions)
+        public DbSeed(IUnitOfWork unitOfWork, IOptions<SeedOptions> seedOptions, IMachineSender machineSender)
         {
             _unitOfWork = unitOfWork;
             _seedOptions = seedOptions.Value;
+            _machineSender = machineSender;
         }
 
         public async Task<int> Seed()
@@ -29,8 +33,9 @@ namespace Machines.DataAccess.EfCore.Services.DB
             var generatedParameters = GenerateParameters(_seedOptions.ParametersCount);
             var generatedMachines = GenerateMachines(_seedOptions.MachinesCount, generatedParameters);
 
-            await _unitOfWork.Parameters.AddRangeAsync(generatedParameters.ToList());
-            await _unitOfWork.Machines.AddRangeAsync(generatedMachines.ToList());
+            _machineSender.SendMachines(ServiceBusMachineHelper.MapMultipleServiceBusMachineDTOs(generatedMachines, Domain.Enums.ServiceBusEnumStatus.Create));
+            await _unitOfWork.Parameters.AddRangeAsync(generatedParameters);
+            await _unitOfWork.Machines.AddRangeAsync(generatedMachines);
             
             var result = await _unitOfWork.CompleteAsync();
             return result;

@@ -14,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationContext>(options => 
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString(""),
+        builder.Configuration.GetConnectionString("MSSQL"),
         b => b.MigrationsAssembly(typeof(ApplicationContext).Assembly.FullName)));
 
 builder.Services.AddHostedService<SendParametersService>();
